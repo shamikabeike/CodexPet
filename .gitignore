@@ -1,0 +1,17 @@
+node_modules/
+.npm-cache/
+dist/
+dist-electron/
+release/
+artifacts/
+coverage/
+*.log
+*.tmp
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
