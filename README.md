@@ -8,13 +8,24 @@
 
 Miao is an open-source, cat-head-shaped Windows desktop companion that displays local Codex usage limits and optional weather information. It blinks, occasionally twitches its ears, stays readable from 25% to 150% size, and contains no full-body pet assets.
 
-![Miao cat-head usage panel](docs/design/codemiao-widget-concept.png)
+## Current interface
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/miao-zh-cn.png" alt="Current Miao interface in Simplified Chinese"><br><sub>Simplified Chinese · 100% view</sub></td>
+    <td align="center"><img src="docs/screenshots/miao-en-us.png" alt="Current Miao interface in English"><br><sub>English · 100% view</sub></td>
+  </tr>
+</table>
+
+<p align="center"><img src="docs/screenshots/miao-compact.png" alt="Current Miao compact layout" width="240"><br><sub>Compact layout used at 25%–36%</sub></p>
+
+These screenshots are generated from the current `main` renderer with clearly labeled demo data. The installed Electron app reads local Codex events and replaces `Demo account` with the detected membership status. Screenshots use a 100% view for documentation clarity; the actual window starts at `260×230` (50%).
 
 > Miao is an independent Electron companion app. It is not an OpenAI product, an official Codex plugin, or a modification of the Codex desktop app.
 
 ## Features
 
-- Reads available Codex rate-limit windows dynamically from local structured events. If the legacy five-hour window is absent, it simply stays hidden.
+- Displays only the quota windows present in the latest local Codex event. The current screenshots therefore show one seven-day window and no invented secondary placeholder; future window changes are handled dynamically.
 - Shows used and remaining percentages, reset time, approximate time remaining, and account membership status.
 - Uses the remaining allowance for warning colors: green at 60%–100%, yellow at 30%–59%, and red below 30%.
 - Updates when Codex writes a new usage event, with a 60-second polling fallback.
@@ -37,7 +48,7 @@ See [Security Policy](SECURITY.md) and [Architecture](docs/ARCHITECTURE.en.md) f
 
 ## Install
 
-Download a Windows build from [GitHub Releases](https://github.com/shamikabeike/CodexPet/releases) when a release is available:
+No version tag has been published yet. After the first tagged release, Windows builds will appear on [GitHub Releases](https://github.com/shamikabeike/CodexPet/releases):
 
 - `Miao-<version>-x64-nsis.exe` — installer;
 - `Miao-<version>-x64-portable.exe` — portable build.
@@ -79,7 +90,8 @@ npm.cmd run package:win # NSIS installer + portable executable
 ```text
 electron/                 Electron main process, preload, usage and weather adapters
 src/                      React UI, localization, animation and shared contracts
-docs/design/              Visual baseline and UI specification
+docs/screenshots/         Screenshots generated from the current renderer
+docs/design/              UI specification
 docs/ARCHITECTURE*.md     Chinese and English architecture notes
 .github/workflows/        CI and Windows release automation
 ```

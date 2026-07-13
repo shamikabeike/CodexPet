@@ -4,6 +4,8 @@
 
 Miao is an Electron + React Windows tray application with one cat-head-shaped usage window. It reads local Codex rate-limit events, renders optional weather, and adds only local eye and ear animation. It has no full-body pet or second window mode.
 
+`docs/screenshots/` is the visual source of truth. Its Chinese, English, and compact images are generated from the current `main` renderer with explicitly labeled demo data; earlier concept art is not part of the product implementation.
+
 ## Data flow
 
 ```mermaid

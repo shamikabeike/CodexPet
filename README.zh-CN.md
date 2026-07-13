@@ -8,13 +8,24 @@
 
 Miao 是一只开源的 Windows 桌面猫咪：它只保留猫头形额度面板，显示本机 Codex 额度与可选天气信息，会自然眨眼、偶尔摇耳，并能在 25%–150% 尺寸下保持可读。项目不包含任何全身宠物动画资产。
 
-![Miao 猫头额度面板](docs/design/codemiao-widget-concept.png)
+## 当前界面
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/miao-zh-cn.png" alt="Miao 当前简体中文界面"><br><sub>简体中文 · 100% 展示</sub></td>
+    <td align="center"><img src="docs/screenshots/miao-en-us.png" alt="Miao 当前英文界面"><br><sub>English · 100% 展示</sub></td>
+  </tr>
+</table>
+
+<p align="center"><img src="docs/screenshots/miao-compact.png" alt="Miao 当前紧凑布局" width="240"><br><sub>25%–36% 使用的紧凑布局</sub></p>
+
+以上截图由当前 `main` 分支渲染，并明确使用演示数据；安装后的 Electron 窗口会读取本机 Codex 事件，并把“演示账号”替换为检测到的会员状态。为方便在文档中看清细节，截图采用 100% 展示，应用实际默认窗口为 `260×230`（50%）。
 
 > Miao 是独立的 Electron 桌面伴侣，不是 OpenAI 官方产品、Codex 官方插件，也不会修改 Codex 桌面软件。
 
 ## 功能
 
-- 按本机结构化事件中实际存在的 `window_minutes` 动态显示额度周期；五小时额度缺失时自动隐藏，恢复后自动出现。
+- 只显示最新本地 Codex 事件中实际存在的额度周期。因此当前截图只有一条 7 天额度，不伪造第二条占位；以后周期增减也按事件动态适配。
 - 显示已用/剩余百分比、重置时间、约剩余时长和账号会员状态。
 - 以剩余额度显示警示色：60%–100% 绿色、30%–59% 黄色、低于 30% 红色。
 - Codex 写入新额度事件时自动同步，并保留 60 秒轮询兜底。
@@ -37,7 +48,7 @@ Electron 主进程只读取 `~/.codex/sessions` 和 `~/.codex/archived_sessions`
 
 ## 安装
 
-发布版本可从 [GitHub Releases](https://github.com/shamikabeike/CodexPet/releases) 下载：
+目前尚未发布版本标签。首次创建版本标签后，Windows 构建会出现在 [GitHub Releases](https://github.com/shamikabeike/CodexPet/releases)：
 
 - `Miao-<version>-x64-nsis.exe`：安装版；
 - `Miao-<version>-x64-portable.exe`：便携版。
@@ -79,7 +90,8 @@ npm.cmd run package:win # NSIS 安装包 + 便携版
 ```text
 electron/                 Electron 主进程、preload、额度与天气适配器
 src/                      React UI、双语、动画和共享契约
-docs/design/              视觉基准与 UI 规格
+docs/screenshots/         由当前渲染器生成的界面截图
+docs/design/              UI 规格
 docs/ARCHITECTURE*.md     中英文架构说明
 .github/workflows/        CI 与 Windows Release 自动化
 ```
