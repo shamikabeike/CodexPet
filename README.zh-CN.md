@@ -48,10 +48,11 @@ Electron 主进程只读取 `~/.codex/sessions` 和 `~/.codex/archived_sessions`
 
 ## 安装
 
-目前尚未发布版本标签。首次创建版本标签后，Windows 构建会出现在 [GitHub Releases](https://github.com/shamikabeike/CodexPet/releases)：
+当前 Windows 正式版为 [Miao v0.1.0](https://github.com/shamikabeike/CodexPet/releases/tag/v0.1.0)：
 
-- `Miao-<version>-x64-nsis.exe`：安装版；
-- `Miao-<version>-x64-portable.exe`：便携版。
+- [`Miao-0.1.0-x64-nsis.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.0/Miao-0.1.0-x64-nsis.exe)：安装版；
+- [`Miao-0.1.0-x64-portable.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.0/Miao-0.1.0-x64-portable.exe)：便携版；
+- [`SHA256SUMS.txt`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.0/SHA256SUMS.txt)：SHA-256 校验清单。
 
 社区开源构建没有商业代码签名，Windows SmartScreen 可能提示“未知发布者”。请确认文件来自本仓库 Releases 页面。
 

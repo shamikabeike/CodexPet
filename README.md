@@ -48,10 +48,11 @@ See [Security Policy](SECURITY.md) and [Architecture](docs/ARCHITECTURE.en.md) f
 
 ## Install
 
-No version tag has been published yet. After the first tagged release, Windows builds will appear on [GitHub Releases](https://github.com/shamikabeike/CodexPet/releases):
+The current Windows release is [Miao v0.1.0](https://github.com/shamikabeike/CodexPet/releases/tag/v0.1.0):
 
-- `Miao-<version>-x64-nsis.exe` — installer;
-- `Miao-<version>-x64-portable.exe` — portable build.
+- [`Miao-0.1.0-x64-nsis.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.0/Miao-0.1.0-x64-nsis.exe) — installer;
+- [`Miao-0.1.0-x64-portable.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.0/Miao-0.1.0-x64-portable.exe) — portable build;
+- [`SHA256SUMS.txt`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.0/SHA256SUMS.txt) — SHA-256 checksums.
 
 Unsigned community builds can trigger a Windows SmartScreen “Unknown publisher” warning. Verify that the file came from this repository's Releases page.
 
