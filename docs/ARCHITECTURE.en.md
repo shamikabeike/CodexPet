@@ -65,7 +65,7 @@ At 36% and below, the renderer switches to a dedicated compact layout with large
 
 ## Localization and motion
 
-The renderer selects Simplified Chinese for `zh*` system locales and English for other locales on first launch. A persisted manual selector lives inside the weather settings popover. Visible quota, membership, duration, weather, accessibility, resize, and document strings share the same locale source. The tray follows the Windows application locale.
+The renderer selects Simplified Chinese for `zh*` system locales and English for other locales on first launch. A persisted manual selector lives inside the weather settings popover. Visible quota, membership, duration, weather, accessibility, resize, and document strings share the same locale source. The tray follows the Windows application locale and loads a packaged multi-size transparent cat-head icon instead of converting SVG at runtime.
 
 Blinking is randomly scheduled every 3.8–9 seconds, with an occasional double blink. Ear twitches occur every 6.5–14 seconds. Weather animation stays clipped to the cat silhouette. `prefers-reduced-motion` disables random scheduling and minimizes CSS movement.
 

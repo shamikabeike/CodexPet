@@ -34,7 +34,7 @@ Miao 是一只开源的 Windows 桌面猫咪：它只保留猫头形额度面板
 - 可选显示城市天气、气温、体感温度、湿度、风速和轻量动态天气图层。
 - 默认以设计尺寸的 50% 启动，可在 25%–150% 间等比缩放；最小尺寸使用单独的大字排版。
 - 首次启动跟随系统语言，可在天气设置弹层中手动切换简体中文或英语，选择会保存在本机。
-- 通过系统托盘显示、隐藏、置顶或退出 Miao。
+- 使用无文字、无天气信息的 Miao 猫头系统托盘图标，可显示、隐藏、置顶或退出 Miao。
 
 ## 隐私与数据边界
 
@@ -48,11 +48,11 @@ Electron 主进程只读取 `~/.codex/sessions` 和 `~/.codex/archived_sessions`
 
 ## 安装
 
-当前 Windows 正式版为 [Miao v0.1.0](https://github.com/shamikabeike/CodexPet/releases/tag/v0.1.0)：
+当前 Windows 正式版为 [Miao v0.1.1](https://github.com/shamikabeike/CodexPet/releases/tag/v0.1.1)：
 
-- [`Miao-0.1.0-x64-nsis.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.0/Miao-0.1.0-x64-nsis.exe)：安装版；
-- [`Miao-0.1.0-x64-portable.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.0/Miao-0.1.0-x64-portable.exe)：便携版；
-- [`SHA256SUMS.txt`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.0/SHA256SUMS.txt)：SHA-256 校验清单。
+- [`Miao-0.1.1-x64-nsis.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.1/Miao-0.1.1-x64-nsis.exe)：安装版；
+- [`Miao-0.1.1-x64-portable.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.1/Miao-0.1.1-x64-portable.exe)：便携版；
+- [`SHA256SUMS.txt`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.1/SHA256SUMS.txt)：SHA-256 校验清单。
 
 社区开源构建没有商业代码签名，Windows SmartScreen 可能提示“未知发布者”。请确认文件来自本仓库 Releases 页面。
 

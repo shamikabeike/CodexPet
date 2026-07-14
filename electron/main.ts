@@ -50,17 +50,22 @@ function preloadPath(): string {
   return join(__dirname, "preload.js");
 }
 
+function iconPath(fileName: string): string {
+  const baseDirectory = app.isPackaged
+    ? process.resourcesPath
+    : join(__dirname, "..");
+  return join(baseDirectory, "assets", fileName);
+}
+
 function safeTrayImage(): Electron.NativeImage {
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-      <path d="M5 11 4 3l8 5c2-.6 6-.6 8 0l8-5-1 8c2 2 3 5 3 8 0 7-5 11-14 11S2 26 2 19c0-3 1-6 3-8Z" fill="#031a18" stroke="#61e8ad" stroke-width="1.8" stroke-linejoin="round"/>
-      <ellipse cx="11" cy="17" rx="2.4" ry="3" fill="#8bf4c7"/>
-      <ellipse cx="21" cy="17" rx="2.4" ry="3" fill="#8bf4c7"/>
-      <path d="M14.5 22c1 1.4 2 1.4 3 0" fill="none" stroke="#8bf4c7" stroke-width="1.4" stroke-linecap="round"/>
-    </svg>`;
-  const dataUrl = `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
-  const image = nativeImage.createFromDataURL(dataUrl);
-  return image.isEmpty() ? nativeImage.createEmpty() : image.resize({ width: 32, height: 32 });
+  for (const fileName of ["miao.ico", "miao-tray.png"]) {
+    const image = nativeImage.createFromPath(iconPath(fileName));
+    if (!image.isEmpty()) {
+      return image;
+    }
+  }
+
+  throw new Error("Miao tray icon assets could not be loaded");
 }
 
 function showWindow(): void {
@@ -126,6 +131,7 @@ function createWindow(): BrowserWindow {
     show: false,
     hasShadow: false,
     backgroundColor: "#00000000",
+    icon: iconPath("miao.ico"),
     alwaysOnTop: true,
     skipTaskbar: true,
     webPreferences: {

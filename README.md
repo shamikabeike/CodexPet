@@ -34,7 +34,7 @@ These screenshots are generated from the current `main` renderer with clearly la
 - Shows optional city weather, temperature, feels-like temperature, humidity, wind, and a subtle animated weather layer.
 - Starts at 50% of the design size and resizes proportionally between 25% and 150%; the smallest sizes use a dedicated readable layout.
 - Follows the system language on first launch and supports manual switching between Simplified Chinese and English in the weather settings popover.
-- Uses the system tray to show, hide, keep on top, or quit Miao.
+- Uses a dedicated text-free Miao cat-head system-tray icon to show, hide, keep on top, or quit Miao.
 
 ## Privacy and data boundaries
 
@@ -48,11 +48,11 @@ See [Security Policy](SECURITY.md) and [Architecture](docs/ARCHITECTURE.en.md) f
 
 ## Install
 
-The current Windows release is [Miao v0.1.0](https://github.com/shamikabeike/CodexPet/releases/tag/v0.1.0):
+The current Windows release is [Miao v0.1.1](https://github.com/shamikabeike/CodexPet/releases/tag/v0.1.1):
 
-- [`Miao-0.1.0-x64-nsis.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.0/Miao-0.1.0-x64-nsis.exe) — installer;
-- [`Miao-0.1.0-x64-portable.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.0/Miao-0.1.0-x64-portable.exe) — portable build;
-- [`SHA256SUMS.txt`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.0/SHA256SUMS.txt) — SHA-256 checksums.
+- [`Miao-0.1.1-x64-nsis.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.1/Miao-0.1.1-x64-nsis.exe) — installer;
+- [`Miao-0.1.1-x64-portable.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.1/Miao-0.1.1-x64-portable.exe) — portable build;
+- [`SHA256SUMS.txt`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.1/SHA256SUMS.txt) — SHA-256 checksums.
 
 Unsigned community builds can trigger a Windows SmartScreen “Unknown publisher” warning. Verify that the file came from this repository's Releases page.
 
