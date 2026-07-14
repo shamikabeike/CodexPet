@@ -72,15 +72,18 @@
             "x64"
           ]
         }
-      ],
-      "artifactName": "Miao-${version}-${arch}-${target}.${ext}"
+      ]
     },
     "nsis": {
+      "artifactName": "Miao-${version}-${arch}-nsis.${ext}",
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Miao"
+    },
+    "portable": {
+      "artifactName": "Miao-${version}-${arch}-portable.${ext}"
     }
   }
 }
