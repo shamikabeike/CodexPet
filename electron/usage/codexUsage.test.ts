@@ -37,6 +37,7 @@ describe("Codex 本地额度事件解析", () => {
     expect(result).toMatchObject({
       source: "local-session",
       planType: "plus",
+      availableResetCount: null,
       model: "gpt-5.6-sol",
       quotas: [
         {
@@ -137,6 +138,7 @@ describe("Codex 本地额度事件解析", () => {
   it("演示快照必须明确标记来源", () => {
     const demo = buildDemoSnapshot(fallbackObservedAt);
     expect(demo.source).toBe("demo");
+    expect(demo.availableResetCount).toBeNull();
     expect(demo.message).toContain("演示数据");
   });
 });

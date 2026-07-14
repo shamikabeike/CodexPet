@@ -7,6 +7,7 @@ import type {
   CodexUsageSnapshot,
   QuotaWindow,
 } from "../../src/shared/contracts";
+import { readCodexUsageFromAppServer } from "./codexAppServer";
 
 const MAX_TAIL_BYTES = 4 * 1024 * 1024;
 const MAX_ROLLOUT_FILES = 16;
@@ -141,6 +142,7 @@ export function parseRolloutTail(
     planType:
       typeof rateLimits.plan_type === "string" ? rateLimits.plan_type : "unknown",
     quotas,
+    availableResetCount: null,
     model,
     observedAt,
     message: null,
@@ -158,6 +160,7 @@ export function buildDemoSnapshot(now = Date.now()): CodexUsageSnapshot {
       windowMinutes: 10_080,
       resetsAt: nowSeconds + 6 * 24 * 60 * 60,
     }],
+    availableResetCount: null,
     model: null,
     observedAt: now,
     message: "未找到 Codex 本地额度事件，当前显示演示数据",
@@ -232,6 +235,11 @@ export function resolveCodexHome(): string {
 export async function readLatestCodexUsage(
   codexHome = resolveCodexHome(),
 ): Promise<CodexUsageSnapshot> {
+  const appServerSnapshot = await readCodexUsageFromAppServer(codexHome);
+  if (appServerSnapshot !== null) {
+    return appServerSnapshot;
+  }
+
   const roots = [join(codexHome, "sessions"), join(codexHome, "archived_sessions")];
   const groups = await Promise.all(roots.map(collectRolloutFiles));
   const candidates = groups

@@ -20,9 +20,10 @@
 
 ## 隐私边界
 
-Miao 只在 Electron 主进程中读取本机 Codex 会话尾部的结构化额度事件，渲染进程只接收百分比、窗口时长、重置时间、套餐、模型名与更新时间。项目明确禁止：
+Miao 优先在 Electron 主进程中调用本机 Codex App Server 的只读额度方法，失败时才读取会话尾部的结构化额度事件。渲染进程只接收百分比、窗口时长、重置时间、可用重置次数、套餐、模型名与更新时间。项目明确禁止：
 
 - 读取或上传 `~/.codex/auth.json`；
+- 调用 `account/rateLimitResetCredit/consume` 或替用户消耗重置次数；
 - 读取提示词、回复正文或工具输出作为产品数据；
 - 向第三方服务发送本地 Codex 会话内容；
 - 在渲染进程开放任意文件系统或命令执行能力。
@@ -51,9 +52,10 @@ Include the affected Miao and Windows versions, reproduction steps, practical im
 
 ### Privacy boundary
 
-Miao reads only structured rate-limit events from the tail of local Codex session files in the Electron main process. The renderer receives percentages, window duration, reset time, plan, model, and observation time. The project must never:
+Miao first calls the local Codex App Server's read-only rate-limit method in the Electron main process and falls back to structured session-tail events only when needed. The renderer receives percentages, window duration, reset time, available reset count, plan, model, and observation time. The project must never:
 
 - read or upload `~/.codex/auth.json`;
+- call `account/rateLimitResetCredit/consume` or spend a reset on the user's behalf;
 - consume prompts, answers, or tool output as product data;
 - send local Codex session content to third parties;
 - expose arbitrary filesystem or command execution to the renderer.

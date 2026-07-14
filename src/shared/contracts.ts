@@ -1,4 +1,4 @@
-export type UsageSource = "local-session" | "demo";
+export type UsageSource = "codex-app-server" | "local-session" | "demo";
 
 export interface QuotaWindow {
   usedPercent: number;
@@ -11,6 +11,7 @@ export interface CodexUsageSnapshot {
   source: UsageSource;
   planType: string;
   quotas: QuotaWindow[];
+  availableResetCount: number | null;
   model: string | null;
   observedAt: number;
   message: string | null;

@@ -12,7 +12,7 @@ These files are product evidence, not concept art. They must be regenerated from
 
 Before committing screenshots:
 
-1. Run the current Vite dev server without `with-5h`.
+1. Run `npm.cmd run screenshots:generate`; the script builds the current renderer and captures all three routes at their exact viewport sizes.
 2. Confirm the page title, DOM text, layout mode, and zero relevant console errors.
 3. Confirm demo data is visibly labeled `演示账号` or `Demo account`.
 4. Check for clipping and overflow, especially in the compact layout.

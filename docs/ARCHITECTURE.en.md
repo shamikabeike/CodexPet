@@ -10,7 +10,8 @@ Miao is an Electron + React Windows tray application with one cat-head-shaped us
 
 ```mermaid
 flowchart LR
-    A["Codex rollout JSONL"] -->|"read-only tail scan"| B["CodexUsageMonitor"]
+    A["Local Codex App Server"] -->|"account/rateLimits/read"| B["CodexUsageMonitor"]
+    A2["Codex rollout JSONL"] -->|"read-only compatibility fallback"| B
     B -->|"validate and normalize"| C["CodexUsageSnapshot"]
     C -->|"narrow IPC"| D["sandboxed preload"]
     D -->|"contextBridge"| E["React renderer"]
@@ -23,16 +24,15 @@ flowchart LR
 
 ## Local usage adapter
 
-`electron/usage/codexUsage.ts` resolves `CODEX_HOME`, or defaults to `~/.codex`, and scans a limited number of recently modified `rollout-*.jsonl` files in `sessions/` and `archived_sessions/`.
+`electron/usage/codexAppServer.ts` is the primary adapter. It starts the local `codex.exe app-server`, initializes the connection, and calls only `account/rateLimits/read`; it never calls `account/rateLimitResetCredit/consume`.
 
-- It reads at most the last 4 MiB of each candidate file.
-- It parses optional `payload.rate_limits.primary` and `secondary` objects, then deduplicates and sorts them by `window_minutes`.
-- It does not hard-code a five-hour or seven-day slot in the renderer.
-- Its output contains only used/remaining percentages, window duration, reset time, plan, model, and observation time.
-- Bad lines, file rotation, or one unreadable session do not block the other candidates.
-- When no valid event exists, it returns an explicitly labeled demo snapshot.
+- The App Server response is reduced to used/remaining percentages, window duration, reset time, plan, available reset count, and observation time. Credit IDs, descriptions, and expiry metadata are discarded.
+- Miao does not read `auth.json`. The local Codex child process reuses the user's existing login and talks to OpenAI; Miao handles only its structured rate-limit response.
+- If a compatible App Server cannot be found or queried, `electron/usage/codexUsage.ts` falls back to a limited tail scan of recent `rollout-*.jsonl` files under `CODEX_HOME` (default `~/.codex`).
+- The fallback reads at most 4 MiB per file, parses optional primary and secondary windows, and never hard-codes a five-hour or seven-day slot in the renderer.
+- Old App Server and rollout responses may not contain a reset count; the UI then shows `—`. If neither source yields a valid window, Miao returns an explicitly labeled demo snapshot.
 
-The local rollout shape is not a public protocol controlled by this repository, so parsing stays isolated behind a tested adapter and shared contract.
+Both sources stay isolated behind tested adapters and a shared renderer contract.
 
 ## Weather adapter
 
@@ -44,7 +44,7 @@ The renderer receives only a structured weather snapshot: temperature, feels-lik
 
 | Layer | Allowed | Explicitly disallowed |
 | --- | --- | --- |
-| Electron main | Read usage events, watch files, manage window/tray, query weather after user setup | Read authentication files; send Codex data to weather services |
+| Electron main | Call the local Codex read-only usage method, read fallback events, watch files, manage window/tray, and query weather after setup | Read authentication files, consume reset credits, or send Codex data to weather services |
 | Preload | Expose fixed typed IPC methods | Arbitrary IPC, Node globals, filesystem paths |
 | React renderer | Render normalized snapshots and local interactions | Filesystem access, command execution, arbitrary navigation |
 
@@ -52,9 +52,9 @@ Important Electron settings include `contextIsolation: true`, `nodeIntegration: 
 
 ## Refresh strategy
 
-1. Read the latest snapshot at startup.
-2. Watch Codex session directories and debounce JSONL changes by 450 ms.
-3. Poll once per minute as a fallback for unavailable or missed filesystem events.
+1. Read usage and available reset count through Codex App Server at startup.
+2. Watch Codex session directories and debounce JSONL changes by 450 ms; use those events as fallback when the App Server query fails.
+3. Query once per minute to stay close to Codex changes and cover missed filesystem events.
 4. Push normalized snapshots to the renderer; there is no manual refresh control in the panel.
 
 ## Window and responsive layout

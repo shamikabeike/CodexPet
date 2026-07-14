@@ -289,7 +289,8 @@ button:focus-visible {
 
 .compact-quota-heading h2,
 .compact-quota-heading p,
-.compact-reset {
+.compact-reset,
+.compact-reset-count {
   margin: 0;
 }
 
@@ -302,7 +303,7 @@ button:focus-visible {
 
 .compact-quota-heading p {
   color: rgb(247 250 248 / 86%);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 650;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -339,6 +340,14 @@ button:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
+.compact-reset-count {
+  color: var(--mint-300);
+  font-size: 17px;
+  font-weight: 720;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
 .compact-content.has-multiple-quotas .cat-face {
   display: none;
 }
@@ -364,6 +373,10 @@ button:focus-visible {
 
 .compact-content.has-multiple-quotas .compact-reset {
   font-size: 15px;
+}
+
+.compact-content.has-multiple-quotas .compact-reset-count {
+  font-size: 14px;
 }
 
 .compact-footer {
@@ -406,7 +419,7 @@ button:focus-visible {
   gap: 5px;
   overflow: hidden;
   color: #c3d0d4;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   text-overflow: ellipsis;
@@ -881,12 +894,13 @@ button:focus-visible {
 
 .quota-heading h2,
 .quota-heading p,
-.reset-time {
+.reset-time,
+.reset-count {
   margin: 0;
 }
 
 .quota-heading h2 {
-  font-size: 19px;
+  font-size: 23px;
   font-weight: 760;
   line-height: 1.2;
   letter-spacing: -0.02em;
@@ -894,7 +908,7 @@ button:focus-visible {
 
 .quota-heading p {
   color: rgb(247 250 248 / 86%);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 620;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
@@ -902,7 +916,7 @@ button:focus-visible {
 }
 
 .quota-heading strong {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 820;
 }
 
@@ -915,7 +929,7 @@ button:focus-visible {
 }
 
 .quota-track {
-  height: 12px;
+  height: 14px;
   overflow: hidden;
   background: linear-gradient(90deg, #334968, var(--track-500));
   border-radius: 999px;
@@ -938,15 +952,26 @@ button:focus-visible {
   align-items: center;
   gap: 7px;
   color: var(--text-400);
-  font-size: 15px;
-  font-weight: 540;
+  font-size: 19px;
+  font-weight: 580;
   line-height: 1.25;
   font-variant-numeric: tabular-nums;
 }
 
 .reset-time svg {
+  width: 20px;
+  height: 20px;
   flex: none;
   color: #9db4c8;
+}
+
+.reset-count {
+  padding-left: 27px;
+  color: var(--mint-300);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
 }
 
 .quota-divider {
@@ -964,18 +989,18 @@ button:focus-visible {
 .status-footer {
   position: absolute;
   z-index: 4;
-  right: 48px;
+  right: 45px;
   bottom: 11px;
-  left: 10px;
+  left: 8px;
   min-width: 0;
   height: 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 6px;
   color: var(--text-400);
-  font-size: 13px;
-  font-weight: 530;
+  font-size: 18px;
+  font-weight: 580;
   line-height: 1;
   white-space: nowrap;
 }
@@ -994,10 +1019,11 @@ button:focus-visible {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 9px;
+  gap: 4px;
   overflow: hidden;
   color: #c5d5da;
-  font-size: 14px;
+  font-size: 18px;
+  letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -1006,7 +1032,7 @@ button:focus-visible {
   min-width: 0;
   display: inline-flex;
   align-items: baseline;
-  gap: 3px;
+  gap: 2px;
 }
 
 .weather-detail i {
@@ -1060,15 +1086,25 @@ button:focus-visible {
 .weather-icon {
   flex: none;
   color: var(--mint-300);
-  font-size: 15px;
+  font-size: 18px;
   line-height: 1;
 }
 
 .weather-summary {
-  max-width: 135px;
+  max-width: 190px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.status-footer .weather-trigger {
+  gap: 3px;
+  padding: 4px 5px;
+}
+
+html[lang="en-US"] .status-footer,
+html[lang="en-US"] .status-footer .weather-details {
+  font-size: 15px;
 }
 
 .weather-popover {

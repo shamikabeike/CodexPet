@@ -28,6 +28,7 @@ function previewSnapshot(now = Date.now()): CodexUsageSnapshot {
     source: "demo",
     planType: "demo",
     quotas,
+    availableResetCount: 3,
     model: "gpt-5.6-sol",
     observedAt: now,
     message: "浏览器预览使用演示数据",

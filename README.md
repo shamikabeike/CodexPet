@@ -26,9 +26,9 @@ These screenshots are generated from the current `main` renderer with clearly la
 ## Features
 
 - Displays only the quota windows present in the latest local Codex event. The current screenshots therefore show one seven-day window and no invented secondary placeholder; future window changes are handled dynamically.
-- Shows used and remaining percentages, reset time, approximate time remaining, and account membership status.
+- Shows used and remaining percentages, reset time, available reset count, approximate time remaining, and account membership status.
 - Uses the remaining allowance for warning colors: green at 60%–100%, yellow at 30%–59%, and red below 30%.
-- Updates when Codex writes a new usage event, with a 60-second polling fallback.
+- Syncs through the local Codex App Server's read-only rate-limit method, refreshes after Codex session changes, and keeps a 60-second polling fallback.
 - Keeps a single cat-head panel—no full-body sprite sheet, second pet window, refresh button, or close button.
 - Blinks naturally and performs low-frequency ear twitches while honoring `prefers-reduced-motion`.
 - Shows optional city weather, temperature, feels-like temperature, humidity, wind, and a subtle animated weather layer.
@@ -40,7 +40,7 @@ These screenshots are generated from the current `main` renderer with clearly la
 
 Miao has no custom cloud backend and does not need an OpenAI API key.
 
-The Electron main process reads only the tail of recent Codex `rollout-*.jsonl` files under `~/.codex/sessions` and `~/.codex/archived_sessions`. It extracts structured `payload.rate_limits` values and sends only normalized usage numbers to the sandboxed renderer. It does **not** read `auth.json`, prompts, answers, or tool output, and it does not upload Codex session content.
+The Electron main process first starts the local Codex App Server and calls only the read-only `account/rateLimits/read` method for usage and available reset count. It never calls the reset-consumption method. If that query is unavailable, Miao falls back to structured rate-limit objects in recent `rollout-*.jsonl` files. Miao does **not** read `auth.json`, prompts, answers, or tool output, and it does not upload Codex session content; the local Codex child process reuses the existing login itself.
 
 Weather is optional. Miao does not use IP, browser, or Windows geolocation. It contacts [Open-Meteo](https://open-meteo.com/) only after the user saves a city. The resolved city and coordinates stay in Electron's local `userData` directory. Open-Meteo data is available under CC BY 4.0; its free API is intended for non-commercial use.
 
@@ -48,11 +48,11 @@ See [Security Policy](SECURITY.md) and [Architecture](docs/ARCHITECTURE.en.md) f
 
 ## Install
 
-The current Windows release is [Miao v0.1.1](https://github.com/shamikabeike/CodexPet/releases/tag/v0.1.1):
+The current Windows release is [Miao v0.1.2](https://github.com/shamikabeike/CodexPet/releases/tag/v0.1.2):
 
-- [`Miao-0.1.1-x64-nsis.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.1/Miao-0.1.1-x64-nsis.exe) — installer;
-- [`Miao-0.1.1-x64-portable.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.1/Miao-0.1.1-x64-portable.exe) — portable build;
-- [`SHA256SUMS.txt`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.1/SHA256SUMS.txt) — SHA-256 checksums.
+- [`Miao-0.1.2-x64-nsis.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.2/Miao-0.1.2-x64-nsis.exe) — installer;
+- [`Miao-0.1.2-x64-portable.exe`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.2/Miao-0.1.2-x64-portable.exe) — portable build;
+- [`SHA256SUMS.txt`](https://github.com/shamikabeike/CodexPet/releases/download/v0.1.2/SHA256SUMS.txt) — SHA-256 checksums.
 
 Unsigned community builds can trigger a Windows SmartScreen “Unknown publisher” warning. Verify that the file came from this repository's Releases page.
 
@@ -83,6 +83,7 @@ npm.cmd run typecheck   # TypeScript checks
 npm.cmd test            # Vitest unit tests
 npm.cmd run build       # Production build
 npm.cmd run verify      # Typecheck + tests + production build
+npm.cmd run screenshots:generate # Build and capture the current three UI screenshots
 npm.cmd run package:win # NSIS installer + portable executable
 ```
 
@@ -100,10 +101,10 @@ docs/ARCHITECTURE*.md     Chinese and English architecture notes
 ## Known limitations
 
 - Packaged desktop releases currently target Windows only.
-- Codex local rollout events are not a public protocol controlled by this project. Upstream format changes may require an adapter update.
+- Codex App Server and the local rollout fallback can change with Codex versions. Older versions that omit reset credits display `—` and may require an adapter update after upstream changes.
 - Miao shows demo mode until a valid local rate-limit event exists.
 - Open-Meteo's free endpoint has no commercial availability guarantee.
-- There is no official OpenAI or Codex integration contract behind this project.
+- Miao uses the local Codex App Server interface, but remains an unofficial community project rather than an OpenAI product or official plugin.
 
 ## Contributing
 

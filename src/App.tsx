@@ -129,7 +129,12 @@ export default function App() {
                   {index > 0 ? (
                     <div className="quota-divider" aria-hidden="true" />
                   ) : null}
-                  <QuotaMeter quota={quota} now={now} />
+                  <QuotaMeter
+                    quota={quota}
+                    now={now}
+                    availableResetCount={snapshot.availableResetCount}
+                    showAvailableResets={index === snapshot.quotas.length - 1}
+                  />
                 </div>
               ))}
             </div>
@@ -153,6 +158,7 @@ export default function App() {
                     `${quotaLabel(quota.windowMinutes, locale)} ${messages.remaining} ${quota.remainingPercent}%`,
                 )
                 .join(locale === "zh-CN" ? "，" : ", ")}
+              {`. ${messages.availableResets(snapshot.availableResetCount)}`}
             </span>
           </div>
         )}

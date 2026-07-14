@@ -17,6 +17,7 @@ interface Messages {
   used: string;
   remaining: string;
   reset: string;
+  availableResets: (count: number | null) => string;
   remainingPercentage: string;
   language: string;
   resizeAria: string;
@@ -58,6 +59,8 @@ export const messages: Record<AppLocale, Messages> = {
     used: "已用",
     remaining: "剩余",
     reset: "重置",
+    availableResets: (count) =>
+      count === null ? "可用重置次数 —" : `${count} 次可用重置`,
     remainingPercentage: "剩余百分比",
     language: "界面语言",
     resizeAria: "拖动调整 Miao 窗口大小",
@@ -105,6 +108,8 @@ export const messages: Record<AppLocale, Messages> = {
     used: "Used",
     remaining: "Left",
     reset: "resets",
+    availableResets: (count) =>
+      count === null ? "Available resets —" : `${count} resets available`,
     remainingPercentage: "remaining percentage",
     language: "Language",
     resizeAria: "Drag to resize the Miao window",
