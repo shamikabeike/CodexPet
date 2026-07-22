@@ -58,10 +58,16 @@ function iconPath(fileName: string): string {
 }
 
 function safeTrayImage(): Electron.NativeImage {
-  for (const fileName of ["miao.ico", "miao-tray.png"]) {
+  const candidates = process.platform === "darwin"
+    ? ["miao-tray.png"]
+    : ["miao.ico", "miao-tray.png"];
+
+  for (const fileName of candidates) {
     const image = nativeImage.createFromPath(iconPath(fileName));
     if (!image.isEmpty()) {
-      return image;
+      return process.platform === "darwin"
+        ? image.resize({ width: 18, height: 18, quality: "best" })
+        : image;
     }
   }
 
@@ -131,7 +137,7 @@ function createWindow(): BrowserWindow {
     show: false,
     hasShadow: false,
     backgroundColor: "#00000000",
-    icon: iconPath("miao.ico"),
+    ...(process.platform === "win32" ? { icon: iconPath("miao.ico") } : {}),
     alwaysOnTop: true,
     skipTaskbar: true,
     webPreferences: {
@@ -231,7 +237,11 @@ if (!singleInstanceLock) {
   app.on("second-instance", showWindow);
 
   app.whenReady().then(async () => {
-    app.setAppUserModelId("io.github.shamikabeike.codexpet");
+    if (process.platform === "win32") {
+      app.setAppUserModelId("io.github.shamikabeike.codexpet");
+    } else if (process.platform === "darwin") {
+      app.dock?.hide();
+    }
     session.defaultSession.setPermissionRequestHandler(
       (_webContents, _permission, callback) => callback(false),
     );

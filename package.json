@@ -1,7 +1,7 @@
 {
   "name": "codex-pet",
-  "version": "0.1.2",
-  "description": "Miao is an open-source cat-shaped Windows companion for local Codex usage and weather.",
+  "version": "0.2.0",
+  "description": "Miao is an open-source cat-shaped desktop companion for local Codex usage and weather.",
   "license": "MIT",
   "author": "CodexPet contributors",
   "homepage": "https://github.com/shamikabeike/CodexPet#readme",
@@ -17,7 +17,8 @@
     "desktop-pet",
     "electron",
     "usage-monitor",
-    "windows"
+    "windows",
+    "macos"
   ],
   "main": "dist-electron/main.js",
   "scripts": {
@@ -27,6 +28,9 @@
     "icons:verify": "electron scripts/verify-icon.cjs",
     "screenshots:generate": "npm run build && electron scripts/capture-screenshots.cjs",
     "package:win": "npm run build && electron-builder --win --publish never",
+    "package:mac": "npm run build && electron-builder --mac --publish never",
+    "package:mac:intel": "npm run build && electron-builder --mac --x64 --publish never",
+    "package:mac:arm64": "npm run build && electron-builder --mac --arm64 --publish never",
     "package:dir": "npm run build && electron-builder --dir",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -85,6 +89,18 @@
             "x64"
           ]
         }
+      ]
+    },
+    "mac": {
+      "icon": "assets/miao-mac.png",
+      "category": "public.app-category.utilities",
+      "minimumSystemVersion": "14.0",
+      "identity": null,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "artifactName": "Miao-${version}-mac-${arch}.${ext}",
+      "target": [
+        "dmg"
       ]
     },
     "nsis": {

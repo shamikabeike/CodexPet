@@ -1,6 +1,8 @@
 import { spawn } from "node:child_process";
+import { constants } from "node:fs";
 import { access, readdir, stat } from "node:fs/promises";
-import { join } from "node:path";
+import { homedir } from "node:os";
+import { posix, win32 } from "node:path";
 import type {
   CodexUsageSnapshot,
   QuotaWindow,
@@ -8,6 +10,7 @@ import type {
 
 const APP_SERVER_TIMEOUT_MS = 10_000;
 const MAX_STDOUT_BUFFER = 1024 * 1024;
+const CLIENT_VERSION = "0.2.0";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -89,20 +92,24 @@ export function parseAppServerRateLimits(
 
 async function fileExists(filePath: string): Promise<boolean> {
   try {
-    await access(filePath);
+    await access(
+      filePath,
+      process.platform === "win32" ? constants.F_OK : constants.X_OK,
+    );
     return true;
   } catch {
     return false;
   }
 }
 
-async function localBinCandidates(): Promise<string[]> {
-  const localAppData = process.env.LOCALAPPDATA?.trim();
+async function windowsVersionedBinCandidates(
+  localAppData: string | undefined,
+): Promise<string[]> {
   if (!localAppData) {
     return [];
   }
 
-  const binRoot = join(localAppData, "OpenAI", "Codex", "bin");
+  const binRoot = win32.join(localAppData, "OpenAI", "Codex", "bin");
   let entries;
   try {
     entries = await readdir(binRoot, { withFileTypes: true });
@@ -114,7 +121,7 @@ async function localBinCandidates(): Promise<string[]> {
     entries
       .filter((entry) => entry.isDirectory())
       .map(async (entry) => {
-        const executable = join(binRoot, entry.name, "codex.exe");
+        const executable = win32.join(binRoot, entry.name, "codex.exe");
         try {
           const details = await stat(executable);
           return { executable, modifiedAt: details.mtimeMs };
@@ -135,17 +142,92 @@ async function localBinCandidates(): Promise<string[]> {
   ];
 }
 
+interface CodexExecutableCandidateOptions {
+  codexHome: string;
+  platform: NodeJS.Platform;
+  homeDirectory: string;
+  localAppData?: string;
+  pathValue?: string;
+}
+
+/**
+ * 生成各桌面平台的 Codex 可执行文件候选路径。
+ * 使用显式平台路径实现，便于在 Windows CI 中验证 macOS 路径。
+ */
+export function buildCodexExecutableCandidates({
+  codexHome,
+  platform,
+  homeDirectory,
+  localAppData,
+  pathValue,
+}: CodexExecutableCandidateOptions): string[] {
+  const pathApi = platform === "win32" ? win32 : posix;
+  const executableName = platform === "win32" ? "codex.exe" : "codex";
+  const pathSeparator = platform === "win32" ? ";" : ":";
+  const pathCandidates = (pathValue ?? "")
+    .split(pathSeparator)
+    .map((entry) => entry.trim().replace(/^"(.*)"$/, "$1"))
+    .filter(Boolean)
+    .map((entry) => pathApi.join(entry, executableName));
+
+  const candidates = [
+    pathApi.join(codexHome, ".sandbox-bin", executableName),
+    pathApi.join(codexHome, "plugins", ".plugin-appserver", executableName),
+  ];
+
+  if (platform === "win32" && localAppData) {
+    candidates.push(
+      pathApi.join(localAppData, "OpenAI", "Codex", "bin", executableName),
+    );
+  }
+
+  if (platform === "darwin") {
+    for (const applicationName of ["Codex.app", "ChatGPT.app"]) {
+      candidates.push(
+        pathApi.join(
+          "/Applications",
+          applicationName,
+          "Contents",
+          "Resources",
+          executableName,
+        ),
+        pathApi.join(
+          homeDirectory,
+          "Applications",
+          applicationName,
+          "Contents",
+          "Resources",
+          executableName,
+        ),
+      );
+    }
+    candidates.push(
+      "/opt/homebrew/bin/codex",
+      "/usr/local/bin/codex",
+      pathApi.join(homeDirectory, ".local", "bin", executableName),
+    );
+  }
+
+  candidates.push(...pathCandidates);
+  return [...new Set(candidates)];
+}
+
 export async function resolveCodexExecutables(
   codexHome: string,
 ): Promise<string[]> {
   const localAppData = process.env.LOCALAPPDATA?.trim();
+  const versionedWindowsCandidates = process.platform === "win32"
+    ? await windowsVersionedBinCandidates(localAppData)
+    : [];
   const candidates = [
-    ...(await localBinCandidates()),
-    join(codexHome, ".sandbox-bin", "codex.exe"),
-    join(codexHome, "plugins", ".plugin-appserver", "codex.exe"),
-    ...(localAppData
-      ? [join(localAppData, "OpenAI", "Codex", "bin", "codex.exe")]
-      : []),
+    ...versionedWindowsCandidates,
+    ...buildCodexExecutableCandidates({
+      codexHome,
+      platform: process.platform,
+      homeDirectory: homedir(),
+      localAppData,
+      pathValue: process.env.PATH,
+    }),
   ];
   const unique = [...new Set(candidates)];
   const existing = await Promise.all(
@@ -227,7 +309,7 @@ function queryRateLimits(
         method: "initialize",
         id: 1,
         params: {
-          clientInfo: { name: "codex-pet", title: "Miao", version: "0.1.2" },
+          clientInfo: { name: "codex-pet", title: "Miao", version: CLIENT_VERSION },
           capabilities: {
             experimentalApi: true,
             requestAttestation: false,

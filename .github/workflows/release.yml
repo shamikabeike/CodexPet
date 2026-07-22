@@ -1,4 +1,4 @@
-name: Windows Release
+name: Desktop Release
 
 on:
   workflow_dispatch:
@@ -10,7 +10,8 @@ permissions:
   contents: write
 
 jobs:
-  package:
+  package-windows:
+    name: Windows x64
     runs-on: windows-latest
     timeout-minutes: 30
 
@@ -30,48 +31,135 @@ jobs:
       - name: Build Windows installer and portable app
         run: npm run package:win
 
-      - name: Generate SHA-256 checksums
+      - name: Verify Windows artifacts
         shell: pwsh
         run: |
-          $lines = Get-ChildItem -LiteralPath release -Filter "*.exe" |
-            Sort-Object Name |
-            ForEach-Object {
-              $hash = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
-              "$hash  $($_.Name)"
-            }
-          if ($lines.Count -lt 2) {
-            throw "Expected both the NSIS installer and portable executable."
+          $executables = @(Get-ChildItem -LiteralPath release -Filter "*.exe")
+          if ($executables.Count -ne 2) {
+            throw "Expected exactly the NSIS installer and portable executable."
           }
-          $lines | Set-Content -LiteralPath release/SHA256SUMS.txt -Encoding utf8
 
-      - name: Upload workflow artifact
+      - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: CodexPet-Windows
+          name: CodexPet-Windows-x64
           path: |
             release/*.exe
             release/*.blockmap
-            release/SHA256SUMS.txt
           if-no-files-found: error
 
+  package-macos:
+    name: macOS ${{ matrix.label }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: Intel
+            runner: macos-15-intel
+            arch: x64
+          - label: Apple Silicon
+            runner: macos-15
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build native macOS DMG
+        run: npm run package:mac -- --${{ matrix.arch }}
+
+      - name: Verify application architecture and DMG
+        shell: bash
+        run: |
+          set -euo pipefail
+          app_binary="$(find release -type f -path '*/Miao.app/Contents/MacOS/Miao' -print -quit)"
+          if [[ -z "$app_binary" ]]; then
+            echo "Miao.app executable was not found." >&2
+            exit 1
+          fi
+
+          binary_info="$(file "$app_binary")"
+          echo "$binary_info"
+          if [[ "${{ matrix.arch }}" == "x64" && "$binary_info" != *"x86_64"* ]]; then
+            echo "Expected an Intel x86_64 executable." >&2
+            exit 1
+          fi
+          if [[ "${{ matrix.arch }}" == "arm64" && "$binary_info" != *"arm64"* ]]; then
+            echo "Expected an Apple Silicon arm64 executable." >&2
+            exit 1
+          fi
+
+          shopt -s nullglob
+          dmg_files=(release/Miao-*-mac-${{ matrix.arch }}.dmg)
+          if [[ ${#dmg_files[@]} -ne 1 ]]; then
+            echo "Expected exactly one ${{ matrix.arch }} DMG." >&2
+            exit 1
+          fi
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CodexPet-macOS-${{ matrix.arch }}
+          path: release/Miao-*-mac-${{ matrix.arch }}.dmg
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - package-windows
+      - package-macos
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Download all release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release
+          merge-multiple: true
+
+      - name: Verify release set and generate SHA-256 checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          windows_installers=(release/*.exe)
+          intel_dmg=(release/Miao-*-mac-x64.dmg)
+          arm_dmg=(release/Miao-*-mac-arm64.dmg)
+          if [[ ${#windows_installers[@]} -ne 2 || ${#intel_dmg[@]} -ne 1 || ${#arm_dmg[@]} -ne 1 ]]; then
+            echo "Release assets are incomplete." >&2
+            find release -maxdepth 1 -type f -print
+            exit 1
+          fi
+
+          cd release
+          mapfile -t assets < <(find . -maxdepth 1 -type f \
+            \( -name '*.exe' -o -name '*.blockmap' -o -name '*.dmg' \) \
+            -printf '%f\n' | sort)
+          sha256sum "${assets[@]}" > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
       - name: Publish GitHub release
-        if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
-        shell: pwsh
+        shell: bash
         run: |
-          $assets = @(
-            Get-ChildItem -LiteralPath release -File |
-              Where-Object {
-                $_.Extension -in ".exe", ".blockmap" -or $_.Name -eq "SHA256SUMS.txt"
-              } |
-              Sort-Object Name |
-              ForEach-Object { $_.FullName }
-          )
-          if ($assets.Count -lt 3) {
-            throw "Release assets are incomplete."
-          }
-          gh release create "$env:GITHUB_REF_NAME" @assets `
-            --title "Miao $env:GITHUB_REF_NAME" `
-            --generate-notes `
+          mapfile -t assets < <(find release -maxdepth 1 -type f -print | sort)
+          gh release create "$GITHUB_REF_NAME" "${assets[@]}" \
+            --title "Miao $GITHUB_REF_NAME" \
+            --generate-notes \
             --verify-tag

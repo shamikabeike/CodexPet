@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 const assetsDirectory = join(process.cwd(), "assets");
 
-describe("Miao Windows icon assets", () => {
+describe("Miao desktop icon assets", () => {
   it("contains a valid multi-size ICO file", () => {
     const icon = readFileSync(join(assetsDirectory, "miao.ico"));
 
@@ -16,9 +16,16 @@ describe("Miao Windows icon assets", () => {
   it("contains transparent PNG fallbacks", () => {
     const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
-    for (const fileName of ["miao-tray.png", "miao-app.png"]) {
+    for (const fileName of ["miao-tray.png", "miao-app.png", "miao-mac.png"]) {
       const image = readFileSync(join(assetsDirectory, fileName));
       expect(image.subarray(0, 8)).toEqual(pngSignature);
     }
+  });
+
+  it("contains a 1024px macOS application icon", () => {
+    const image = readFileSync(join(assetsDirectory, "miao-mac.png"));
+
+    expect(image.readUInt32BE(16)).toBe(1024);
+    expect(image.readUInt32BE(20)).toBe(1024);
   });
 });

@@ -2,7 +2,7 @@
 
 中文版 · [English](ARCHITECTURE.en.md)
 
-Miao 是一个 Electron + React Windows 常驻面板。它只显示猫头形额度窗口，读取本机 Codex 额度事件，并以低频摇耳、自然眨眼提供轻量“宠物感”；不包含独立全身宠物或第二种窗口形态。
+Miao 是一个 Electron + React 跨平台常驻面板，支持 Windows 与 macOS。它只显示猫头形额度窗口，读取本机 Codex 额度事件，并以低频摇耳、自然眨眼提供轻量“宠物感”；不包含独立全身宠物或第二种窗口形态。
 
 当前渲染结果以 `docs/screenshots/` 为准：中文、英文和紧凑布局截图均由当前 `main` 代码生成并使用明确标注的演示数据，旧概念稿不属于产品实现。
 
@@ -26,7 +26,8 @@ flowchart LR
 
 入口位于 `electron/usage/codexAppServer.ts` 与 `electron/usage/codexUsage.ts`。
 
-- 首选启动本机 Codex 随附的 `codex.exe app-server`，初始化后只调用 `account/rateLimits/read`；不会调用 `account/rateLimitResetCredit/consume`。
+- 首选启动本机 Codex 随附的 `codex app-server`（Windows 文件名为 `codex.exe`），初始化后只调用 `account/rateLimits/read`；不会调用 `account/rateLimitResetCredit/consume`。
+- Windows 会检查 Codex 桌面应用目录、`CODEX_HOME` 辅助目录和 `PATH`；macOS 还会检查 `/Applications`、`~/Applications` 下 Codex 与新版 ChatGPT 应用包的 `Contents/Resources/codex`。
 - App Server 响应被缩减为已用/剩余百分比、窗口分钟数、重置时间、套餐、可用重置次数和观察时间；重置券 ID、说明与有效期不进入应用快照。
 - Miao 不读取 `auth.json`。本机 Codex 子进程自行复用用户已有登录状态并向 OpenAI 获取额度，Miao 只处理其结构化响应。
 - 找不到兼容 App Server 或查询失败时，才扫描 `CODEX_HOME`（默认 `~/.codex`）下 `sessions/` 与 `archived_sessions/` 中最近修改的少量 `rollout-*.jsonl`。
@@ -53,13 +54,13 @@ App Server 与本地会话格式都被隔离在适配器和契约测试之后；
 ## 刷新策略
 
 1. 启动时通过 Codex App Server 读取一次最新额度与可用重置次数。
-2. Windows `fs.watch` 递归监听会话目录，对 JSONL 变化做 450ms 防抖并触发同步；查询失败时使用对应会话事件后备。
+2. 操作系统的 `fs.watch` 递归监听会话目录，对 JSONL 变化做 450ms 防抖并触发同步；查询失败时使用对应会话事件后备。
 3. 每 60 秒重新查询一次，与 Codex 额度变化保持低延迟同步并兼作文件监听兜底。
 4. UI 不提供手动刷新按钮；渲染层直接订阅主进程发布的最新结构化快照。
 
 ## 窗口形态
 
-窗口使用 `520×460` 作为设计坐标，默认以 50% 的 `260×230` 启动：透明、无系统边框、默认置顶。猫耳与标题栏可拖动；天气入口与右下角缩放手柄属于不可拖动的交互区域。缩放手柄把鼠标位移投影到固定宽高比，并通过受限 IPC 调用 `BrowserWindow.setContentSize`，允许在 25%–150% 范围内等比缩放。透明窗口保持 `resizable: false`，不依赖各平台表现不一致的系统原生边框缩放。宠物窗口不提供刷新或关闭按钮，显示、隐藏与退出由系统托盘菜单统一管理；托盘与 Windows 可执行文件使用随包分发的多尺寸透明猫头图标，不再依赖运行时 SVG 转换。
+窗口使用 `520×460` 作为设计坐标，默认以 50% 的 `260×230` 启动：透明、无系统边框、默认置顶。猫耳与标题栏可拖动；天气入口与右下角缩放手柄属于不可拖动的交互区域。缩放手柄把鼠标位移投影到固定宽高比，并通过受限 IPC 调用 `BrowserWindow.setContentSize`，允许在 25%–150% 范围内等比缩放。透明窗口保持 `resizable: false`，不依赖各平台表现不一致的系统原生边框缩放。宠物窗口不提供刷新或关闭按钮，显示、隐藏与退出由 Windows 系统托盘或 macOS 菜单栏图标统一管理；macOS 启动后隐藏 Dock 图标。应用与状态栏均使用随包分发的无文字透明猫头图标，不依赖运行时 SVG 转换。
 
 渲染层在缩放比例不高于 36% 时切换到独立紧凑布局，而不是继续机械缩小完整面板。紧凑布局使用一半宽高的内部设计坐标再放大两倍，因此在 25% 的 `130×115` 实际窗口中，主文字仍约为 10px、按钮约为 15px、进度条约为 5.5px；猫头 SVG 轮廓、天气图层和窗口尺寸保持不变。额度恢复为两条时会压缩说明文字并隐藏中部猫脸，为两条进度信息让出空间。
 
@@ -76,12 +77,12 @@ App Server 与本地会话格式都被隔离在适配器和契约测试之后；
 
 ## 双语界面
 
-首次启动时，渲染进程把 `zh*` 系统语言映射为简体中文，其余语言映射为英语；用户也可在天气设置弹层中手动切换，选择保存在本机 `localStorage`。额度、会员状态、倒计时、天气、辅助阅读文本、缩放提示与文档标题共用同一语言源。系统托盘跟随 Windows 应用语言。
+首次启动时，渲染进程把 `zh*` 系统语言映射为简体中文，其余语言映射为英语；用户也可在天气设置弹层中手动切换，选择保存在本机 `localStorage`。额度、会员状态、倒计时、天气、辅助阅读文本、缩放提示与文档标题共用同一语言源。托盘或菜单栏菜单跟随操作系统应用语言。
 
 ## 构建与发布
 
 - Vite 构建 React 渲染层，并由 `vite-plugin-electron` 构建主进程与 preload。
 - Vitest 覆盖额度解析与格式化。
-- `electron-builder` 生成 Windows NSIS 安装包和便携版。
-- GitHub Actions 在每个 PR 上执行类型检查、测试和构建；`v*` 标签触发 Windows Release。
-- 当前开源发行包不做商业代码签名，Windows SmartScreen 可能显示未知发布者提示。
+- `electron-builder` 生成 Windows x64 NSIS 安装包与便携版，以及 macOS x64/arm64 DMG。
+- `v*` 标签分别在 Windows x64、macOS Intel 和 macOS Apple Silicon GitHub 执行器上构建，验证 macOS 主可执行文件架构后，再合并资产并生成统一的 SHA-256 清单。
+- 当前开源发行包不做商业代码签名或 Apple 公证；Windows SmartScreen 与 macOS Gatekeeper 可能显示来源警告。

@@ -3,7 +3,7 @@ const { join } = require("node:path");
 
 app.whenReady().then(() => {
   const assetsDirectory = join(__dirname, "..", "assets");
-  const results = ["miao.ico", "miao-tray.png", "miao-app.png"].map(
+  const results = ["miao.ico", "miao-tray.png", "miao-app.png", "miao-mac.png"].map(
     (fileName) => {
       const image = nativeImage.createFromPath(join(assetsDirectory, fileName));
       if (image.isEmpty()) {

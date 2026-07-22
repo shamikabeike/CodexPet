@@ -181,6 +181,10 @@ foreach ($size in @(16, 20, 24, 32, 48, 64, 128, 256)) {
 
 [System.IO.File]::WriteAllBytes((Join-Path $resolvedOutput "miao-tray.png"), [byte[]]$images[32])
 [System.IO.File]::WriteAllBytes((Join-Path $resolvedOutput "miao-app.png"), [byte[]]$images[256])
+[System.IO.File]::WriteAllBytes(
+  (Join-Path $resolvedOutput "miao-mac.png"),
+  [byte[]](Convert-ToPngBytes -Source $master -Size 1024)
+)
 Write-MultiSizeIcon -Images $images -Path (Join-Path $resolvedOutput "miao.ico")
 $master.Dispose()
 

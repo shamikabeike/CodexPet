@@ -2,7 +2,7 @@
 
 [中文版](ARCHITECTURE.md) · English
 
-Miao is an Electron + React Windows tray application with one cat-head-shaped usage window. It reads local Codex rate-limit events, renders optional weather, and adds only local eye and ear animation. It has no full-body pet or second window mode.
+Miao is an Electron + React tray/menu-bar application for Windows and macOS with one cat-head-shaped usage window. It reads local Codex rate-limit events, renders optional weather, and adds only local eye and ear animation. It has no full-body pet or second window mode.
 
 `docs/screenshots/` is the visual source of truth. Its Chinese, English, and compact images are generated from the current `main` renderer with explicitly labeled demo data; earlier concept art is not part of the product implementation.
 
@@ -24,9 +24,10 @@ flowchart LR
 
 ## Local usage adapter
 
-`electron/usage/codexAppServer.ts` is the primary adapter. It starts the local `codex.exe app-server`, initializes the connection, and calls only `account/rateLimits/read`; it never calls `account/rateLimitResetCredit/consume`.
+`electron/usage/codexAppServer.ts` is the primary adapter. It starts the local `codex app-server` (`codex.exe` on Windows), initializes the connection, and calls only `account/rateLimits/read`; it never calls `account/rateLimitResetCredit/consume`.
 
 - The App Server response is reduced to used/remaining percentages, window duration, reset time, plan, available reset count, and observation time. Credit IDs, descriptions, and expiry metadata are discarded.
+- Windows discovery covers Codex desktop directories, `CODEX_HOME` helpers, and `PATH`. macOS discovery also checks the Codex and current ChatGPT app bundles under `/Applications` and `~/Applications` for `Contents/Resources/codex`.
 - Miao does not read `auth.json`. The local Codex child process reuses the user's existing login and talks to OpenAI; Miao handles only its structured rate-limit response.
 - If a compatible App Server cannot be found or queried, `electron/usage/codexUsage.ts` falls back to a limited tail scan of recent `rollout-*.jsonl` files under `CODEX_HOME` (default `~/.codex`).
 - The fallback reads at most 4 MiB per file, parses optional primary and secondary windows, and never hard-codes a five-hour or seven-day slot in the renderer.
@@ -65,7 +66,7 @@ At 36% and below, the renderer switches to a dedicated compact layout with large
 
 ## Localization and motion
 
-The renderer selects Simplified Chinese for `zh*` system locales and English for other locales on first launch. A persisted manual selector lives inside the weather settings popover. Visible quota, membership, duration, weather, accessibility, resize, and document strings share the same locale source. The tray follows the Windows application locale and loads a packaged multi-size transparent cat-head icon instead of converting SVG at runtime.
+The renderer selects Simplified Chinese for `zh*` system locales and English for other locales on first launch. A persisted manual selector lives inside the weather settings popover. Visible quota, membership, duration, weather, accessibility, resize, and document strings share the same locale source. The tray/menu-bar menu follows the operating-system locale and loads a packaged transparent cat-head icon instead of converting SVG at runtime. Miao hides its Dock icon on macOS and stays available from the menu bar.
 
 Blinking is randomly scheduled every 3.8–9 seconds, with an occasional double blink. Ear twitches occur every 6.5–14 seconds. Weather animation stays clipped to the cat silhouette. `prefers-reduced-motion` disables random scheduling and minimizes CSS movement.
 
@@ -73,6 +74,6 @@ Blinking is randomly scheduled every 3.8–9 seconds, with an occasional double 
 
 - Vite and `vite-plugin-electron` build the renderer, Electron main process, and preload.
 - Vitest covers usage parsing, weather normalization, formatting, localization, quota health, and window sizing.
-- `electron-builder` creates x64 NSIS and portable Windows executables.
-- GitHub Actions runs `npm run verify` on pushes and pull requests; `v*` tags build GitHub Releases.
-- Community builds are currently unsigned and may show a Windows SmartScreen warning.
+- `electron-builder` creates x64 NSIS and portable Windows executables plus x64 and arm64 macOS DMGs.
+- A `v*` tag builds on native Windows x64, macOS Intel, and macOS Apple Silicon GitHub runners. The workflow checks each macOS executable architecture before publishing all assets and one SHA-256 manifest.
+- Community builds are unsigned and not Apple-notarized, so Windows SmartScreen or macOS Gatekeeper may show a source warning.
