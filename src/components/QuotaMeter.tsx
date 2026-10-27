@@ -11,15 +11,11 @@ import { useI18n } from "../i18n";
 interface QuotaMeterProps {
   quota: QuotaWindow;
   now: number;
-  availableResetCount: number | null;
-  showAvailableResets: boolean;
 }
 
 export function QuotaMeter({
   quota,
   now,
-  availableResetCount,
-  showAvailableResets,
 }: QuotaMeterProps) {
   const { locale, messages } = useI18n();
   const health = quotaHealth(quota);
@@ -61,11 +57,6 @@ export function QuotaMeter({
           })
         </span>
       </p>
-      {showAvailableResets ? (
-        <p className="reset-count">
-          {messages.availableResets(availableResetCount)}
-        </p>
-      ) : null}
     </section>
   );
 }

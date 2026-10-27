@@ -28,7 +28,9 @@ async function captureShot(shot) {
     },
   });
 
-  await window.loadFile(entryFile, { query: { lang: shot.lang } });
+  await window.loadFile(entryFile, {
+    query: { lang: shot.lang, "with-5h": "1" },
+  });
   await window.webContents.executeJavaScript(
     "document.fonts.ready.then(() => new Promise((resolve) => setTimeout(resolve, 250)))",
   );

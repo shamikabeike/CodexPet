@@ -26,7 +26,7 @@ These screenshots are generated from the current `main` renderer with clearly la
 
 ## Features
 
-- Displays only the quota windows present in the latest local Codex event. The current screenshots therefore show one seven-day window and no invented secondary placeholder; future window changes are handled dynamically.
+- Displays only the quota windows present in the latest local Codex event. The current screenshots show the returned five-hour and seven-day windows; missing or future windows are still handled dynamically without placeholders.
 - Shows used and remaining percentages, reset time, available reset count, approximate time remaining, and account membership status.
 - Uses the remaining allowance for warning colors: green at 60%–100%, yellow at 30%–59%, and red below 30%.
 - Syncs through the local Codex App Server's read-only rate-limit method, refreshes after Codex session changes, and keeps a 60-second polling fallback.
@@ -90,6 +90,7 @@ npm run typecheck          # TypeScript checks
 npm test                   # Vitest unit tests
 npm run build              # Production build
 npm run verify             # Typecheck + tests + production build
+npm run layout:verify      # Check two-quota layout from 25% through 150%
 npm run screenshots:generate # Build and capture the current three UI screenshots
 npm run package:win        # Windows NSIS installer + portable executable
 npm run package:mac:intel  # macOS Intel DMG (run on macOS)

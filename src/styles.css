@@ -348,35 +348,75 @@ button:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
+.compact-reset-summary {
+  flex: none;
+  padding-top: 4px;
+  border-top: 1px solid rgb(159 180 192 / 18%);
+  white-space: nowrap;
+}
+
 .compact-content.has-multiple-quotas .cat-face {
-  display: none;
+  z-index: 7;
+  top: 31px;
+  right: 16px;
+  left: auto;
+  display: grid;
+  pointer-events: none;
+  transform: scale(0.38);
+  transform-origin: top right;
+}
+
+.compact-content.has-multiple-quotas .compact-brand {
+  max-width: 142px;
+}
+
+.compact-content.has-multiple-quotas .compact-plan {
+  max-width: 80px;
 }
 
 .compact-content.has-multiple-quotas .compact-quota-panel {
-  top: 61px;
-  padding-block: 7px;
+  top: 55px;
+  bottom: 36px;
+  justify-content: flex-start;
+  gap: 3px;
+  padding-block: 5px;
 }
 
 .compact-content.has-multiple-quotas .compact-quota + .compact-quota {
-  padding-top: 7px;
+  padding-top: 4px;
   border-top: 1px solid rgb(159 180 192 / 18%);
 }
 
 .compact-content.has-multiple-quotas .compact-quota {
-  gap: 4px;
+  gap: 2px;
 }
 
 .compact-content.has-multiple-quotas .compact-quota-heading h2,
 .compact-content.has-multiple-quotas .compact-quota-heading strong {
   font-size: 18px;
+  line-height: 1.05;
+}
+
+.compact-content.has-multiple-quotas .compact-quota-heading p {
+  font-size: 16px;
 }
 
 .compact-content.has-multiple-quotas .compact-reset {
   font-size: 15px;
+  line-height: 1.05;
 }
 
-.compact-content.has-multiple-quotas .compact-reset-count {
+.compact-content.has-multiple-quotas .compact-quota-track {
+  height: 9px;
+}
+
+.compact-content.has-multiple-quotas .compact-reset-summary {
+  width: 100%;
+  padding-top: 2px;
+  overflow: hidden;
   font-size: 14px;
+  line-height: 1.05;
+  text-overflow: ellipsis;
 }
 
 .compact-footer {
@@ -868,6 +908,11 @@ button:focus-visible {
   padding-block: 18px;
 }
 
+.quota-panel.has-multiple-quotas {
+  top: 108px;
+  padding: 10px 18px 9px;
+}
+
 .quota-meter {
   --quota-color: var(--mint-400);
   --quota-color-soft: #8bf4c7;
@@ -974,6 +1019,49 @@ button:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
+.quota-reset-summary {
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px solid rgb(159 180 192 / 18%);
+  white-space: nowrap;
+}
+
+.quota-panel.has-multiple-quotas .quota-meter {
+  gap: 5px;
+}
+
+.quota-panel.has-multiple-quotas .quota-heading h2 {
+  font-size: 22px;
+}
+
+.quota-panel.has-multiple-quotas .quota-heading p {
+  font-size: 17px;
+}
+
+.quota-panel.has-multiple-quotas .quota-heading strong {
+  font-size: 19px;
+}
+
+.quota-panel.has-multiple-quotas .quota-track {
+  height: 12px;
+}
+
+.quota-panel.has-multiple-quotas .reset-time {
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.quota-panel.has-multiple-quotas .reset-time svg {
+  width: 18px;
+  height: 18px;
+}
+
+.quota-panel.has-multiple-quotas .quota-reset-summary {
+  padding-left: 25px;
+  font-size: 16px;
+  line-height: 1.1;
+}
+
 .quota-divider {
   height: 1px;
   margin: 11px 0;
@@ -984,6 +1072,10 @@ button:focus-visible {
     rgb(159 180 192 / 19%) 90%,
     transparent
   );
+}
+
+.quota-panel.has-multiple-quotas .quota-divider {
+  margin: 7px 0;
 }
 
 .status-footer {

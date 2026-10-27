@@ -62,7 +62,7 @@ Important Electron settings include `contextIsolation: true`, `nodeIntegration: 
 
 The design coordinate space is `520×460`. Miao starts at `260×230` (50%), stays transparent and frameless, and resizes proportionally from 25% to 150% through a constrained IPC call. The ears and title area drag the window; weather controls and the lower-right resize handle are interactive no-drag regions.
 
-At 36% and below, the renderer switches to a dedicated compact layout with larger internal type and thicker progress bars instead of mechanically shrinking the full layout. The outer cat silhouette does not change. A missing five-hour quota does not leave an empty placeholder.
+At 36% and below, the renderer switches to a dedicated compact layout with larger internal type and thicker progress bars instead of mechanically shrinking the full layout. The outer cat silhouette does not change. A missing five-hour quota does not leave an empty placeholder. When both quota windows are present, tighter spacing and a smaller cat face at the right of the title bar preserve the blinking eyes. Available reset credits use a dedicated summary row at the bottom of the quota panel instead of being attached to the last quota window, preventing two-window layouts from colliding with the weather footer.
 
 ## Localization and motion
 

@@ -1,6 +1,6 @@
 {
   "name": "codex-pet",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Miao is an open-source cat-shaped desktop companion for local Codex usage and weather.",
   "license": "MIT",
   "author": "CodexPet contributors",
@@ -26,6 +26,7 @@
     "build": "npm run typecheck && vite build",
     "icons:generate": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-icons.ps1",
     "icons:verify": "electron scripts/verify-icon.cjs",
+    "layout:verify": "npm run build && electron scripts/verify-responsive-layout.cjs",
     "screenshots:generate": "npm run build && electron scripts/capture-screenshots.cjs",
     "package:win": "npm run build && electron-builder --win --publish never",
     "package:mac": "npm run build && electron-builder --mac --publish never",

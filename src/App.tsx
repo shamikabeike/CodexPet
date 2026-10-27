@@ -122,7 +122,7 @@ export default function App() {
             <CatFace />
 
             <div
-              className={`quota-panel ${snapshot.quotas.length === 1 ? "is-single" : ""}`}
+              className={`quota-panel ${snapshot.quotas.length === 1 ? "is-single" : "has-multiple-quotas"}`}
             >
               {snapshot.quotas.map((quota, index) => (
                 <div key={quota.windowMinutes}>
@@ -132,11 +132,12 @@ export default function App() {
                   <QuotaMeter
                     quota={quota}
                     now={now}
-                    availableResetCount={snapshot.availableResetCount}
-                    showAvailableResets={index === snapshot.quotas.length - 1}
                   />
                 </div>
               ))}
+              <p className="reset-count quota-reset-summary">
+                {messages.availableResets(snapshot.availableResetCount)}
+              </p>
             </div>
 
             <footer className="status-footer">

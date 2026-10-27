@@ -26,7 +26,7 @@ Miao 是一只开源的 Windows 与 macOS 桌面猫咪：它只保留猫头形�
 
 ## 功能
 
-- 只显示最新本地 Codex 事件中实际存在的额度周期。因此当前截图只有一条 7 天额度，不伪造第二条占位；以后周期增减也按事件动态适配。
+- 只显示最新本地 Codex 事件中实际存在的额度周期。当前截图展示已返回的 5 小时与 7 天额度；周期缺失或以后增减时仍按事件动态适配，不伪造占位。
 - 显示已用/剩余百分比、重置时间、可用重置次数、约剩余时长和账号会员状态。
 - 以剩余额度显示警示色：60%–100% 绿色、30%–59% 黄色、低于 30% 红色。
 - 通过本机 Codex App Server 的只读额度接口同步，Codex 会话变化时触发刷新，并保留 60 秒轮询兜底。
@@ -90,6 +90,7 @@ npm run typecheck          # TypeScript 检查
 npm test                   # Vitest 单元测试
 npm run build              # 生产构建
 npm run verify             # 类型检查 + 测试 + 生产构建
+npm run layout:verify      # 检查 25%–150% 双额度布局
 npm run screenshots:generate # 构建并生成三张当前界面截图
 npm run package:win        # Windows NSIS 安装包 + 便携版
 npm run package:mac:intel  # macOS Intel DMG（需在 macOS 执行）

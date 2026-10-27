@@ -31,15 +31,9 @@ function shortQuotaLabel(windowMinutes: number, locale: AppLocale): string {
 
 interface CompactQuotaProps {
   quota: QuotaWindow;
-  availableResetCount: number | null;
-  showAvailableResets: boolean;
 }
 
-function CompactQuota({
-  quota,
-  availableResetCount,
-  showAvailableResets,
-}: CompactQuotaProps) {
+function CompactQuota({ quota }: CompactQuotaProps) {
   const { locale, messages } = useI18n();
   const health = quotaHealth(quota);
   const progressPercent = quotaProgressPercent(quota);
@@ -69,11 +63,6 @@ function CompactQuota({
       <p className="compact-reset">
         {formatResetTime(quota, locale)} {messages.reset}
       </p>
-      {showAvailableResets ? (
-        <p className="compact-reset-count">
-          {messages.availableResets(availableResetCount)}
-        </p>
-      ) : null}
     </section>
   );
 }
@@ -89,6 +78,7 @@ export function CompactPanel({
   onWeatherOpenChange,
   onSetCity,
 }: CompactPanelProps) {
+  const { messages } = useI18n();
   const hasMultipleQuotas = snapshot.quotas.length > 1;
 
   return (
@@ -113,14 +103,15 @@ export function CompactPanel({
       <CatFace />
 
       <div className="compact-quota-panel">
-        {snapshot.quotas.map((quota, index) => (
+        {snapshot.quotas.map((quota) => (
           <CompactQuota
             key={quota.windowMinutes}
             quota={quota}
-            availableResetCount={snapshot.availableResetCount}
-            showAvailableResets={index === snapshot.quotas.length - 1}
           />
         ))}
+        <p className="compact-reset-count compact-reset-summary">
+          {messages.availableResets(snapshot.availableResetCount)}
+        </p>
       </div>
 
       <footer className="compact-footer">

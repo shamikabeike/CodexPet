@@ -6,9 +6,9 @@ These files are product evidence, not concept art. They must be regenerated from
 
 | File | Route | Viewport | Expected layout |
 | --- | --- | --- | --- |
-| `miao-zh-cn.png` | `/?lang=zh` | `520×460` | Chinese, full, one seven-day demo quota |
-| `miao-en-us.png` | `/?lang=en` | `520×460` | English, full, one seven-day demo quota |
-| `miao-compact.png` | `/?lang=zh` | `240×160` | Chinese compact layout, about 35% scale |
+| `miao-zh-cn.png` | `/?lang=zh&with-5h=1` | `520×460` | Chinese, full, five-hour and seven-day demo quotas |
+| `miao-en-us.png` | `/?lang=en&with-5h=1` | `520×460` | English, full, five-hour and seven-day demo quotas |
+| `miao-compact.png` | `/?lang=zh&with-5h=1` | `240×160` | Chinese compact two-quota layout, about 35% scale |
 
 Before committing screenshots:
 
